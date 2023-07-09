@@ -1,42 +1,29 @@
-/*
-firstChar == major element (assuming it occurs more time than other, which may not be true)
-secondChar == minor element (assuming it occurs less time than other, which may not be true)
-restCount > 0 is important.
-*/
 class Solution {
-public:
-    int largestVariance(string s) {
-        int n = s.size();
-        vector<int> freq(26);
-        for(int i = 0; i < n; i++) freq[s[i] - 'a']++;
-        int maxi = 0;
-        for(int i = 0; i < 26; i++){
-            for(int j = 0; j < 26; j++){
-                char firstChar = 'a' + i;
-                char secondChar = 'a' + j;
-                int firstCount = 0;
-                int secondCount = 0;
-                int restCount = freq[j];
-                if(i == j || !freq[i] || !freq[j]) continue;
-                for(int k = 0; k < n; k++){
-                    
-                    if(s[k] == firstChar) firstCount++;
-                    if(s[k] == secondChar) {
-                        secondCount++;
-                        restCount--;
+    public:
+        int largestVariance(string s) {
+            int ans = 0;
+            unordered_map<char, int> freq;
+            for(auto& c:s){
+                freq[c]++;
+            }
+            for(char ch1='a';ch1<='z';ch1++){
+                for(char ch2='a';ch2<='z';ch2++){
+                    if(ch1==ch2 || freq[ch1]==0 || freq[ch2]==0)
+                    continue;
+                    for(int rev=1;rev<=2;rev++){
+                        int cnt1 = 0,cnt2 = 0;
+                        for(auto& c:s){
+                            cnt1 += c==ch1;
+                            cnt2 += c==ch2;
+                            if(cnt1<cnt2)
+                            cnt1 = cnt2 = 0;
+                            if(cnt1>0 and cnt2>0)
+                            ans = max(ans,cnt1-cnt2);
+                        }
+                        reverse(s.begin(),s.end());
                     }
-                    if(secondCount > 0){
-                        maxi = max(maxi, firstCount - secondCount);
-                    }
-                    if(firstCount < secondCount && restCount > 0){
-                        firstCount = 0;
-                        secondCount = 0;
-                    }
-                    // cout << firstChar << ": " << firstCount << " " << secondChar << ": " << secondCount << endl;
-                    // cout << "maxi: " << maxi << endl;
                 }
             }
+            return ans;
         }
-        return maxi;
-    }
 };
